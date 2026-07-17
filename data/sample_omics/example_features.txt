@@ -1,0 +1,13 @@
+# One feature ID per line (comments and blank lines are ignored).
+# Supported: Ensembl gene (ENSG...), gene symbols, UniProt accessions,
+# and graph-suffixed IDs (*_transcript / *_protein).
+
+ENSG00000141510
+ENSG00000171862
+TP53
+APOE
+P04637
+Q07973
+Q07973_transcript
+P05067_protein
+NOT_A_REAL_FEATURE_XYZ

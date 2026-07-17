@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "universal-graph-feature-mapper"
+version = "1.0.0"
+description = "Map omics feature columns onto a universal biological graph"
+requires-python = ">=3.10"
+dependencies = ["pandas>=1.5", "pyyaml>=6.0", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+notebook = ["jupyter>=1.0", "ipykernel>=6.0", "matplotlib>=3.7"]
+
+[project.scripts]
+ugm-map = "universal_graph_mapper.cli:main_map"
+ugm-compare = "universal_graph_mapper.cli:main_compare"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["universal_graph_mapper*"]

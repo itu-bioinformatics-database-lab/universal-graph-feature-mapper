@@ -1,0 +1,25 @@
+# --- Large data (not for GitHub) ---
+# Universal graph (~1.3 GB) — obtain separately; see data/README.md
+data/graphs/universalGraph_new.json
+data/graphs/*.json
+!data/graphs/README.md
+
+# GitHub blocks files >100 MB (optional master tables; edge tables are enough)
+data/mappers/**/master_identifier_mappings_long.json
+
+# --- Runtime / local outputs ---
+outputs/
+*.pyc
+__pycache__/
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+.ipynb_checkpoints/
+.DS_Store
+*.swp
+.pytest_cache/
+.mypy_cache/

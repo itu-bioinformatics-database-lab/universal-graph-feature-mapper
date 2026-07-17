@@ -1,0 +1,5 @@
+# Paths relative to the package root (self-contained for sharing).
+universal_graph: "data/graphs/universalGraph_new.json"
+biomart_dir: "data/mappers/Biomart Mappings"
+hgnc_dir: "data/mappers/HGNC Mappings"
+uniprot_dir: "data/mappers/UniProt Mappings"
