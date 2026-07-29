@@ -513,7 +513,7 @@ def write_markdown_summary(
                 "",
                 "- Prefer `mapping.strategy: optimized` with the **overall** profile for gene/transcript/protein.",
                 "- Keep legacy for non-protein omics (miRNA, enhancer, promoter, metabolite).",
-                "- Extend tables with Ensembl transcript edges to recover ENST* inputs.",
+                "- ENST* inputs resolve via BioMart `ensembl_transcript_to_*.json` edge tables.",
                 "",
             ]
         )

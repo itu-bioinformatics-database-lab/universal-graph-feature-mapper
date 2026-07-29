@@ -63,7 +63,8 @@ Each column is typed **independently** (a file is never assumed to be uniform):
 
 1. empty → `EMPTY`
 2. UniProtKB regex (incl. `A0A…`) → `UNIPROT`
-3. `ENST…` → `ENSEMBL_TRANSCRIPT` (currently unrecoverable — no ENST edge tables)
+3. `ENST…` → `ENSEMBL_TRANSCRIPT` → UniProt via BioMart transcript edge tables
+   (`ensembl_transcript_to_{ensembl_gene,uniprot,gene_symbol}.json`)
 4. `ENSG…` → `ENSEMBL_GENE`
 5. symbol-like token → `GENE_SYMBOL`
 6. otherwise → `OTHER`
@@ -111,7 +112,8 @@ feature id  →  (BioMart/HGNC/UniProt hops)  →  {UniProt accessions}
 - Bounded by `max_depth` (default 4).
 - Visited `(id, type)` pairs are de-duplicated.
 - Already-UniProt inputs short-circuit (isoform stripped).
-- `ENSEMBL_TRANSCRIPT` and unrecognized types fail fast with an explicit `failure_reason`.
+- Unrecognized types fail fast with an explicit `failure_reason`.
+  `ENSEMBL_TRANSCRIPT` resolves through BioMart transcript edge tables when present.
 - The discovery path is recorded for provenance (`mapping_path`, e.g. `Ensembl Gene → UniProt`).
 
 ---
@@ -205,7 +207,9 @@ gains are explicit.
 
 ## 11. Known limitations
 
-- **ENST (Ensembl transcript) IDs** are not recoverable — no ENST edge tables are shipped.
+- **ENST coverage is partial for UniProt**: every transcript maps to an Ensembl gene in
+  BioMart, but only coding transcripts with Swiss-Prot/TrEMBL cross-refs resolve directly
+  (or via gene→UniProt) to UniProt accessions used by the graph.
 - **Metabolites** have no vertex type in the universal graph and are out of scope.
 - Coverage depends on the **specific graph build**; a different `universalGraph_new.json`
   version can change which accessions are in-network.

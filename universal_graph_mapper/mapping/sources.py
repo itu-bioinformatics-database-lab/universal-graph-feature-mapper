@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import json
 from abc import ABC, abstractmethod
 from collections import defaultdict
@@ -35,6 +36,10 @@ _EDGE_TABLES = (
     "ensembl_gene_to_gene_symbol.json",
     "uniprot_to_ensembl_gene.json",
     "uniprot_to_gene_symbol.json",
+    # Ensembl transcript edges (BioMart; absent folders simply skip missing files)
+    "ensembl_transcript_to_ensembl_gene.json",
+    "ensembl_transcript_to_uniprot.json",
+    "ensembl_transcript_to_gene_symbol.json",
 )
 
 
@@ -71,10 +76,10 @@ class OfflineJsonMappingSource(MappingSource):
         if not self.tables_dir.is_dir():
             raise FileNotFoundError(f"Mapping directory not found: {self.tables_dir}")
         for fname in self.table_names:
-            path = self.tables_dir / fname
-            if not path.exists():
+            path = self._resolve_table_path(fname)
+            if path is None:
                 continue
-            records = json.loads(path.read_text())
+            records = _load_json_records(path)
             if not isinstance(records, list) or not records:
                 continue
             s_type = _id_type(records[0].get("source_id_type", ""))
@@ -90,6 +95,17 @@ class OfflineJsonMappingSource(MappingSource):
                 if tid not in bucket[sid]:
                     bucket[sid].append(tid)
         self._loaded = True
+
+    def _resolve_table_path(self, fname: str) -> Path | None:
+        """Prefer plain JSON; fall back to ``.json.gz`` for large BioMart tables."""
+        path = self.tables_dir / fname
+        if path.exists():
+            return path
+        if fname.endswith(".json"):
+            gz = self.tables_dir / f"{fname}.gz"
+            if gz.exists():
+                return gz
+        return None
 
     def lookup(self, source_id: str, source_type: IdentifierType) -> list[tuple[str, IdentifierType]]:
         self.load()
@@ -199,3 +215,11 @@ def _id_type(label: str) -> IdentifierType | None:
         "gene_symbol": IdentifierType.GENE_SYMBOL,
         "hgnc_symbol": IdentifierType.GENE_SYMBOL,
     }.get(key)
+
+
+def _load_json_records(path: Path):
+    """Load a JSON list from ``.json`` or ``.json.gz``."""
+    if path.suffix == ".gz" or str(path).endswith(".json.gz"):
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            return json.load(fh)
+    return json.loads(path.read_text(encoding="utf-8"))

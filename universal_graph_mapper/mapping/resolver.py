@@ -81,13 +81,6 @@ class OptimizedResolver:
             result.mapping_path = "Not mapped"
             return result
 
-        if detected is IdentifierType.ENSEMBL_TRANSCRIPT:
-            # Current offline tables have no ENST edges; record attempt explicitly.
-            result.attempts.append("ensembl_transcript:no_edge_table")
-            result.failure_reason = "transcript_without_mapping_table"
-            result.mapping_path = "Not mapped"
-            return result
-
         if detected is IdentifierType.UNIPROT:
             uid = _strip_isoform(norm)
             result.uniprot_ids = [uid]
